@@ -38,7 +38,7 @@ See `reports/` for full audit report examples.
 
 ```bash
 # Clone and setup
-git clone <repo-url>
+git clone git@github.com:merimastarlit/terraform-plan-auditor.git
 cd terraform-plan-auditor
 python3.12 -m venv venv
 source venv/bin/activate
