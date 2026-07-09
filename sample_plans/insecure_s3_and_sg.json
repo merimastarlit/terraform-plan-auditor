@@ -1,0 +1,205 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.0",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.data_store",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "data_store",
+          "provider_name": "registry.terraform.io/hashicorp/aws",
+          "schema_version": 0,
+          "values": {
+            "bucket": "my-app-data-store",
+            "tags": {}
+          }
+        },
+        {
+          "address": "aws_s3_bucket_public_access_block.data_store",
+          "mode": "managed",
+          "type": "aws_s3_bucket_public_access_block",
+          "name": "data_store",
+          "provider_name": "registry.terraform.io/hashicorp/aws",
+          "schema_version": 0,
+          "values": {
+            "block_public_acls": false,
+            "block_public_policy": false,
+            "ignore_public_acls": false,
+            "restrict_public_buckets": false,
+            "bucket": "my-app-data-store"
+          }
+        },
+        {
+          "address": "aws_security_group.web",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "web",
+          "provider_name": "registry.terraform.io/hashicorp/aws",
+          "schema_version": 1,
+          "values": {
+            "name": "web-sg",
+            "description": "Allow web traffic",
+            "ingress": [
+              {
+                "from_port": 0,
+                "to_port": 65535,
+                "protocol": "tcp",
+                "cidr_blocks": ["0.0.0.0/0"],
+                "description": "Allow all TCP"
+              },
+              {
+                "from_port": 22,
+                "to_port": 22,
+                "protocol": "tcp",
+                "cidr_blocks": ["0.0.0.0/0"],
+                "description": "SSH access"
+              }
+            ],
+            "egress": [
+              {
+                "from_port": 0,
+                "to_port": 0,
+                "protocol": "-1",
+                "cidr_blocks": ["0.0.0.0/0"],
+                "description": "Allow all outbound"
+              }
+            ],
+            "tags": {}
+          }
+        },
+        {
+          "address": "aws_instance.app_server",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "app_server",
+          "provider_name": "registry.terraform.io/hashicorp/aws",
+          "schema_version": 1,
+          "values": {
+            "ami": "ami-0c55b159cbfafe1f0",
+            "instance_type": "x2idn.16xlarge",
+            "monitoring": false,
+            "metadata_options": {
+              "http_tokens": "optional"
+            },
+            "tags": {
+              "Name": "app-server"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.data_store",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "data_store",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "bucket": "my-app-data-store",
+          "tags": {}
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_public_access_block.data_store",
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "data_store",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "block_public_acls": false,
+          "block_public_policy": false,
+          "ignore_public_acls": false,
+          "restrict_public_buckets": false,
+          "bucket": "my-app-data-store"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.web",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "web",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "name": "web-sg",
+          "description": "Allow web traffic",
+          "ingress": [
+            {
+              "from_port": 0,
+              "to_port": 65535,
+              "protocol": "tcp",
+              "cidr_blocks": ["0.0.0.0/0"],
+              "description": "Allow all TCP"
+            },
+            {
+              "from_port": 22,
+              "to_port": 22,
+              "protocol": "tcp",
+              "cidr_blocks": ["0.0.0.0/0"],
+              "description": "SSH access"
+            }
+          ],
+          "egress": [
+            {
+              "from_port": 0,
+              "to_port": 0,
+              "protocol": "-1",
+              "cidr_blocks": ["0.0.0.0/0"],
+              "description": "Allow all outbound"
+            }
+          ],
+          "tags": {}
+        }
+      }
+    },
+    {
+      "address": "aws_instance.app_server",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "app_server",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "ami": "ami-0c55b159cbfafe1f0",
+          "instance_type": "x2idn.16xlarge",
+          "monitoring": false,
+          "metadata_options": {
+            "http_tokens": "optional"
+          },
+          "tags": {
+            "Name": "app-server"
+          }
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    }
+  }
+}

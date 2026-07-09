@@ -1,0 +1,22 @@
+# Core — Agent SDK and API
+claude-agent-sdk
+anthropic
+
+# MCP — custom MCP server
+mcp[cli]>=1.27,<2
+
+# Environment and config
+python-dotenv
+
+# Data validation
+pydantic
+
+# Observability
+langfuse
+
+# Testing
+pytest
+pytest-asyncio
+
+# HTTP
+httpx
