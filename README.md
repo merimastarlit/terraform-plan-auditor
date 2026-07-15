@@ -54,6 +54,49 @@ python -m agent.auditor sample_plans/insecure_s3_and_sg.json
 python -m pytest tests/ -v
 ```
 
+
+## Observability
+
+This project integrates Langfuse for production observability. Every audit run is traced, capturing:
+
+- Tool execution order and input/output
+- Total cost per audit run
+- Number of agentic turns
+- Model used
+- Policy checks executed
+
+### Setting Up Langfuse Tracing
+
+1. Create a free account at [cloud.langfuse.com](https://cloud.langfuse.com)
+2. Create a new project called `terraform-plan-auditor`
+3. Go to **Settings → API Keys** and copy your public and secret keys
+4. Add to `.env`:
+
+```bash
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=https://cloud.langfuse.com
+```
+
+5. Run an audit:
+
+```bash
+python -m agent.auditor sample_plans/insecure_s3_and_sg.json
+```
+
+6. Check your Langfuse dashboard — you should see a trace named `terraform-audit` with metadata including cost, turns, and tools called.
+
+### Why This Matters
+
+Langfuse lets you answer production questions:
+- "How much does each audit cost on average?"
+- "Which policy checks are slowest?"
+- "Did the agent ever skip a check?"
+- "How has performance changed as we added policies?"
+
+This is the difference between "the agent should do X" and "here's proof it did X on every run."
+
+
 ## Project Structure
 
 ```
@@ -87,3 +130,4 @@ python -m agent.auditor plan.json
 - [Claude Agent SDK](https://docs.anthropic.com) — agentic loop and orchestration
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io) — custom tool server
 - Python 3.12, Pydantic, pytest
+

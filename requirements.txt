@@ -12,7 +12,7 @@ python-dotenv
 pydantic
 
 # Observability
-langfuse
+langfuse>=3,<4
 
 # Testing
 pytest

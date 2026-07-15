@@ -12,9 +12,16 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage, TextBlock, ResultMessage
+from claude_agent_sdk import (
+    query, ClaudeAgentOptions, AssistantMessage,
+    TextBlock, ToolUseBlock, ResultMessage,
+)
+from langfuse import get_client
+
+langfuse = get_client()
 
 
 async def run_audit(plan_path: str, output_path: str = None):
@@ -63,6 +70,12 @@ async def run_audit(plan_path: str, output_path: str = None):
 
     report_lines = []
 
+    with langfuse.start_as_current_observation(
+        as_type="span",
+        name="terraform-audit",
+        input={"plan_file": Path(abs_plan_path).name},
+    ) as root:
+        tool_calls = []
 
     # This is the agentic loop running. query() handles everything internally — sending requests to Claude, checking stop_reason, executing tool calls, appending results. It yields messages as they stream back. You don't write the while loop yourself — the SDK does it.
 
@@ -74,9 +87,31 @@ async def run_audit(plan_path: str, output_path: str = None):
                 if isinstance(block, TextBlock):
                     print(block.text)
                     report_lines.append(block.text)
-
+                elif isinstance(block, ToolUseBlock):
+                    tool_calls.append(block.name)
+                    with root.start_as_current_observation(
+                        as_type="span",
+                        name=block.name,
+                        input=block.input,
+                    ):
+                        pass
         # ResultMessage is the final message — the agent is done. It contains total cost and which model was used. This is the equivalent of stop_reason == "end_turn" — the SDK wraps it in a ResultMessage for you.
         if isinstance(message, ResultMessage):
+            model = (
+                list(message.model_usage.keys())[0]
+                if message.model_usage else "unknown"
+            )
+            root.update(output="\n".join(report_lines))
+            root.update_trace(
+                metadata={
+                    "cost_usd": message.total_cost_usd,
+                    "num_turns": message.num_turns,
+                    "model": model,
+                    "tools_called": tool_calls,
+                },
+                tags=["terraform-audit"],
+            )
+
             print("-" * 60)
             print(f"Audit complete. Cost: ${message.total_cost_usd:.4f}")
             print(f"Model: {list(message.model_usage.keys())[0] if message.model_usage else 'unknown'}")
